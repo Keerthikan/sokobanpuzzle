@@ -1,5 +1,6 @@
 import sys
 import math
+import copy
 from sokoban import *
 from sokoban_main import *
 
@@ -147,8 +148,41 @@ class SokobanHeuristic:
 	def null_heuristic(self,state): 
 		return 0
 		
-	def manhattan_heuristic(self,state):
-		return 0
+	def manhattan_heuristic(self,state):	
+		goalCoords = list( self.smap.goals.keys() )
+		# delete the @ object 
+		for object in state.objects:
+			for index in range(len(goalCoords)):
+				if object == goalCoords[index]:
+					del goalCoords[index]
+					break
+		
+		#
+		sum = 0
+		playerCoord = state.playerCoord		
+		#print "playerCoord: ", playerCoord 
+		visitedGoalIndex = {}
+		for object in state.objects:
+			# if it is at the goal position, just continue
+			if self.smap.is_goal( object ):
+				continue
+			# find the nearest goal
+			minDist = 1000000;
+			minIndex = 0;
+			for index in range(len(goalCoords)):
+				if index in visitedGoalIndex:
+					continue
+				dist = manhattan_distance( object, goalCoords[index] )
+				if dist < minDist:
+					minDist = dist
+					minIndex = index
+				#visitedGoalIndex[minIndex] = True;
+			sum += minDist
+			#visitedGoalIndex[minIndex] = True;
+			#sum += manhattan_distance( object, playerCoord )
+			#playerCoord = goalCoords[minIndex]
+			#del goalCoords[minIndex] 		
+		return sum
 
 	def navigation_heuristic(self,state):
 		return 0
