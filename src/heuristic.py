@@ -144,47 +144,73 @@ class SokobanHeuristic:
 		self.cached_shortest_paths_block = [0] * (smap.w*smap.h)
 		self.shortest_distance = [0] * (smap.w*smap.h)
 		self.shortest_distance_block = [0] * (smap.w*smap.h)
+		
+		self.count = 0
 
 	def null_heuristic(self,state): 
 		return 0
 		
 	def manhattan_heuristic(self,state):	
-		goalCoords = list( self.smap.goals.keys() )
+		
+		if self.count == 201:
+			j = 0
+		
 		# delete the @ object 
+		goalCoords = copy.deepcopy( self.smap.goals.keys() )
 		for object in state.objects:
 			for index in range(len(goalCoords)):
 				if object == goalCoords[index]:
 					del goalCoords[index]
 					break
-		
 		#
-		sum = 0
-		playerCoord = state.playerCoord		
-		#print "playerCoord: ", playerCoord 
-		visitedGoalIndex = {}
+		nonGoalObjects = []
 		for object in state.objects:
-			# if it is at the goal position, just continue
 			if self.smap.is_goal( object ):
 				continue
-			# find the nearest goal
-			minDist = 1000000;
-			minIndex = 0;
-			for index in range(len(goalCoords)):
-				if index in visitedGoalIndex:
-					continue
-				dist = manhattan_distance( object, goalCoords[index] )
-				if dist < minDist:
-					minDist = dist
-					minIndex = index
-				#visitedGoalIndex[minIndex] = True;
-			sum += minDist
-			#visitedGoalIndex[minIndex] = True;
-			#sum += manhattan_distance( object, playerCoord )
-			#playerCoord = goalCoords[minIndex]
-			#del goalCoords[minIndex] 		
-		return sum
+			nonGoalObjects.append( object ) 			
+		#
+		player = copy.deepcopy( state.playerCoord )	
+		sum = 0	 
+		while len(nonGoalObjects) > 0:
+			# find the nearest object
+			dist2Obj, indexObj = self.getMDistAndIndexFromNearestObj( player, nonGoalObjects )
+			#print "count ", self.count
+			# compute the M distance
+			dist2Goal, indexGoal = self.getMDistAndIndexFromNearestObj( nonGoalObjects[indexObj], goalCoords )
+			sum += dist2Goal
+			#sum += dist2Obj
+			# set player coordinate
+			player = copy.deepcopy( goalCoords[indexGoal] )
+			# remove this object
+			del( nonGoalObjects[indexObj] )
+			del( goalCoords[indexGoal] )
 
-	def navigation_heuristic(self,state):
+		self.count = self.count + 1
+		#print self.count
+		return sum
+		#return 10000
+
+	def navigation_heuristic(self,state):	
+		# delete the @ object 
+		goalCoords = copy.deepcopy( self.smap.goals.keys() )
+		for object in state.objects:
+			for index in range(len(goalCoords)):
+				if object == goalCoords[index]:
+					del goalCoords[index]
+					break
+		#
+		nonGoalObjects = []
+		for object in state.objects:
+			if self.smap.is_goal( object ):
+				continue
+			nonGoalObjects.append( object ) 			
+		#
+		player = copy.deepcopy( state.playerCoord )	
+		sum = 0	 
+		while len(nonGoalObjects) > 0:
+			numSteps, parent = navigation_search( player, self.navMap )
+			#indexObj = 
+		
 		return 0
 
 	def cached_navigation_heuristic(self,state):
@@ -193,3 +219,12 @@ class SokobanHeuristic:
 	def other_heuristic(state):
 		return 0
 
+	def getMDistAndIndexFromNearestObj(self, object, goals):
+		minDist = 1000000;
+		minIndex = 0;
+		for index in range(len(goals)):
+			dist = manhattan_distance( object, goals[index] )
+			if dist < minDist:
+				minDist = dist
+				minIndex = index
+		return (minDist, minIndex)
