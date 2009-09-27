@@ -13,6 +13,7 @@
 
 
 import sys
+import copy
 
 # Uses 2-tuples (x,y) to represent coordinates throughout.
 # Tuples are immutable (so can safely be used as dict keys)
@@ -185,8 +186,16 @@ class SokobanState:
 	# objects is a list of 2-coordinate tuples
 	def __init__(self, playerCoord=(), objects=[]):
 		self.playerCoord = playerCoord
-		self.objects = objects
+		#self.objects = objects
 	
+		# sort the objects before storing them 
+		sorted_objs = copy.deepcopy( objects )
+		sorted_objs.sort()
+		self.objects = sorted_objs
+#		if objects != self.objects: 
+#			print objects
+#			print self.objects
+		
 	def tup(self):
 		return (self.playerCoord, tuple(self.objects))
 		
