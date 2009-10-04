@@ -134,7 +134,7 @@ if __name__ == "__main__":
 	else:
 		heuristics = "0"
 		print_iter_count = 0
-		max_iters = 1000000
+		max_iters = 100000
 		mode=SEARCH
 		pathfile = NULL
 		allow_pulls=False

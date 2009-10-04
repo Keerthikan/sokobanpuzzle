@@ -186,41 +186,45 @@ class SokobanState:
 	# objects is a list of 2-coordinate tuples
 	def __init__(self, playerCoord=(), objects=[]):
 		self.playerCoord = playerCoord
-		#self.objects = objects
+		self.objects = objects
 	
 		# sort the objects before storing them 
-		sorted_objs = copy.deepcopy( objects )
-		sorted_objs.sort()
-		self.objects = sorted_objs
-#		if objects != self.objects: 
-#			print objects
-#			print self.objects
+#		sorted_objs = copy.deepcopy( objects )
+#		sorted_objs.sort()
+#		self.objects = sorted_objs
 		
 	def tup(self):
 		return (self.playerCoord, tuple(self.objects))
 		
 	def __repr__(self):
+		print "repr"
 		return str( self.tup() )
 	
 	def __hash__(self):
+		#print "hash"
 		return hash( self.tup() )
 	
 	def __lt__(self, other):
+		#print "lt"
 		return self.tup() < other.tup()
 	
 	def __le__(self, other):
+		#print "le"
 		return self.tup() <= other.tup()
 	
 	def __eq__(self, other):
 		return self.tup() == other.tup()
 	
 	def __ne__(self, other):
+		#print "ne"
 		return self.tup() != other.tup()
 	
 	def __gt__(self, other):
+		#print "gt"
 		return self.tup() > other.tup()
 	
 	def __ge__(self, other):
+		#print "ge"
 		return self.tup() >= other.tup()
 		
 
