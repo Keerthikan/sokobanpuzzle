@@ -77,6 +77,12 @@ class AStar:
 			#print 'visited',visited #for debugging
 			if(visited):
 				#print 'revisit happend'	#for debugging
+				
+#				print "fringe length ", len(self.fringe) 
+#				for obj in self.fringe:
+#					print obj
+				#print self.fringe
+				
 				if( n[AStar.G] + costs[i] >= visited[AStar.G] ):	# cost is higer than previous one, then ignore this new state
 					continue
 				else:	#cost is lower than previous, keep new state, delete the previous one from fringe
@@ -84,6 +90,7 @@ class AStar:
 					try:
 						self.fringe.remove(visited)
 						heapify(self.fringe)
+						#print self.fringe
 					except:
 						print 'Strange! self.fringe.remove(visited) fails'
 					self.add_successor(n,succ,costs[i])
